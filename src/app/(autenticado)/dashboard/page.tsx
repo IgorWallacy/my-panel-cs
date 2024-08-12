@@ -1,84 +1,113 @@
 "use client";
-import {  useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
 import api from "@/service/api";
-import { SmilePlus, Users2 } from "lucide-react";
-
-
-
+import { UsersIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
-  const router = useRouter();
-  const token = useRef<string | null>(null);
+  const [totalUsuarios, setTotalUsuarios] = useState(0);
 
-  if (typeof window !== "undefined") {
-    token.current = localStorage.getItem("access_token") ?? "";
-    if (token.current) {
-    } else {
-      router.push("/login");
-    }
-  }
-
-  const token_intercept = () => {
-    let a = token.current ? token.current : null;
-
-    api.interceptors.request.use(
-      (config) => {
-        // Do something before request is sent
-
-        config.headers["Authorization"] = "bearer " + a;
-        return config;
-      },
-
-      (error) => {
-        Promise.reject(error);
-      }
-    );
+  const getTotalUsuariosAtivos = async () => {
+    return api
+      .get("/api/usuario/todos")
+      .then((response) => {
+        setTotalUsuarios(response?.data?.length);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   useEffect(() => {
-    token_intercept();
+    getTotalUsuariosAtivos();
   }, []);
 
   return (
     <>
-      <div className=" flex gap-5 flex-wrap m-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Meus logins(s)</CardTitle>
-            <CardDescription className="max-w-lg text-balance leading-relaxed">
-              Atualmente você tem 5 login(s) cadastrados
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button>
-              <SmilePlus className="mr-2" />
-              Criar um novo login
-            </Button>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Meus cliente(s)</CardTitle>
-            <CardDescription className="max-w-lg text-balance leading-relaxed">
-              Atualmente você tem 10 cliente(s) cadastrados
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button>
-              <Users2 className="mr-2" />
-              Criar um novo cliente
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="flex justify-center items-center m-5 flex-wrap">
+        <div className="flex-1 justify-center items-center m-1">
+          <Card className="w-full max-w-sm p-6 grid gap-6">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
+                <UsersIcon className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold">Usuários</h3>
+            </div>
+            <div className="grid gap-2 text-muted-foreground">
+              <div className="flex items-center justify-between text-green-500">
+                <span>Ativos</span>
+                <span className="font-medium">{totalUsuarios}</span>
+              </div>
+              <div className="flex items-center justify-between text-red-500">
+                <span>Inativos</span>
+                <span className="font-medium">0</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Total</span>
+                <span className="font-medium">0</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div className="flex-1 justify-center items-center m-1">
+          <Card className="w-full max-w-sm p-6 grid gap-6">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
+                <UsersIcon className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold">Clientes</h3>
+            </div>
+            <div className="grid gap-2 text-muted-foreground">
+              <div className="flex items-center justify-between text-green-500">
+                <span>Ativos</span>
+                <span className="font-medium">{totalUsuarios}</span>
+              </div>
+              <div className="flex items-center justify-between text-red-500">
+                <span>Inativos</span>
+                <span className="font-medium">0</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Total</span>
+                <span className="font-medium">0</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div className="flex-1 justify-center items-center m-1">
+          <Card className="w-full max-w-sm p-6 grid gap-6">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
+                <UsersIcon className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold">Logins</h3>
+            </div>
+            <div className="grid gap-2 text-muted-foreground">
+              <div className="flex items-center justify-between text-green-500">
+                <span>Ativos</span>
+                <span className="font-medium">{totalUsuarios}</span>
+              </div>
+              <div className="flex items-center justify-between text-red-500">
+                <span>Inativos</span>
+                <span className="font-medium">0</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Total</span>
+                <span className="font-medium">0</span>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     </>
   );

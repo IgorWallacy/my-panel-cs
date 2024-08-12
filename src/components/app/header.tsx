@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { CircleX,  LogOut } from "lucide-react";
 import Token_dados from "@/app/(autenticado)/(token)/util";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -10,10 +10,12 @@ import api from "@/service/api";
 
 export default function Sidebar({
   children,
+  setExpanded,
   expanded,
 }: {
   children: React.ReactNode;
   expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const nome = Token_dados()?.nome;
   const email = Token_dados()?.sub;
@@ -40,21 +42,34 @@ export default function Sidebar({
   return (
     <>
       <aside
-        className={`h-screen pt-10 ${expanded ? "block" : "hidden"} md:block`}
+        className={`h-screen w-screen ${
+          expanded ? "block" : "hidden"
+        } md:block`}
       >
-        <nav className="h-full flex flex-col  border-r shadow-sm">
-          <ul className="flex-1">{children}</ul>
+        <nav className="h-screen  flex flex-col  border-r shadow-sm">
+          <div className="flex items-center justify-end p-1">
+            <Button variant="destructive" onClick={() => setExpanded(false)}>
+              <CircleX size="icon" />
+            </Button>
+          </div>
 
-          <div className="py-1 border-t flex ">
+          <ul className="flex flex-col h-screen items-center  gap-5 p-1 text-xl text-black bg-gray-100 border-2">
+            {children}
+          </ul>
+
+          
             <div
-              className={`flex gap-1 justify-between h-24 items-start overflow-hidden transition-all w-52 ml-3`}
+              className={`flex flex-row  gap-5  h-24 items-center justify-center w-full`}
             >
+              <div className="flex gap-5">
+                
+             
               <img
                 className="w-16 h-12  rounded-full"
                 src={`data:image/png;base64,${foto}`}
                 alt="avatar"
               />
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-around w-full ">
                 <h4 className="font-semibold"> {nome} </h4>
                 <span className="text-xs text-gray-500">{email}</span>
                 <span className="text-xs text-gray-500">{permissao}</span>
@@ -65,6 +80,7 @@ export default function Sidebar({
                   variant="destructive"
                   onClick={() => {
                     localStorage.clear();
+                   
                     //  router.push("/login")
                   }}
                 >
@@ -72,7 +88,7 @@ export default function Sidebar({
                 </Button>
               </Link>
             </div>
-          </div>
+            </div>
         </nav>
       </aside>
     </>
@@ -85,15 +101,17 @@ export function SidebarItem({
   active,
   alert,
   href,
+  setExpanded,
 }: {
   icon: React.ReactNode;
   text: string;
   active: boolean;
   alert: boolean;
   href: string;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
-    <Link href={href}>
+    <Link href={href} onClick={() => setExpanded(false)}>
       <li
         className={`relative flex items-center py-2 px-3 cursor-pointer hover:text-white font-medium rounded-md transition-colors ${
           active

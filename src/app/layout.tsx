@@ -4,6 +4,8 @@ import { Inter as FontSans } from "next/font/google"
 import "./globals.css";
 
 import { cn } from "@/lib/utils"
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -21,15 +23,19 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
+    
     <html lang="pt-BR" suppressHydrationWarning>
+      <Suspense fallback={<Loading />}>
       <body className={cn(
-          "min-h-full bg-background font-sans antialiased",
+          "font-sans antialiased",
           fontSans.variable
         )}>
         
         {children}
       </body>
+      </Suspense>
     </html>
+   
   );
 }
 

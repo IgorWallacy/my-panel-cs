@@ -2,9 +2,12 @@
 import { jwtDecode } from "jwt-decode";
 
 interface Token {
+  id : string   | null;
   nome: string | null;
   sub: string  | null;
   scope: string | null;
+  exp: number  ;
+  iat: number ;
   
 }
 
@@ -19,7 +22,7 @@ const Token_dados = (): Token => {
         }
     }
   
-    return { nome: null, sub: null, scope: null }; 
+    return { id: null , nome: null, sub: null, scope: null , exp: 0 , iat: 0  }; 
   
 };
 

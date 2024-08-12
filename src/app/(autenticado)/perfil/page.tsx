@@ -21,7 +21,6 @@ import { z } from "zod";
 import api from "@/service/api";
 import { useRouter } from "next/navigation";
 
-
 type FotoProps = {
   id: string | null;
   foto: string;
@@ -45,10 +44,8 @@ const Perfil = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const idFoto = useRef(null)
-  const [foto, setFoto] = useState()
-
-  
+  const idFoto = useRef(null);
+  const [foto, setFoto] = useState();
 
   const {
     register,
@@ -86,18 +83,14 @@ const Perfil = () => {
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
-    
   };
-
- 
 
   const getFotoId = () => {
     return api
-      .get(`/api/usuario/perfil/foto/fotoID/${email}`) 
+      .get(`/api/usuario/perfil/foto/fotoID/${email}`)
       .then((r) => {
         idFoto.current = r.data?.id;
         setFoto(r.data?.foto);
-      
       })
       .catch((e) => {
         console.log(e);
@@ -105,7 +98,6 @@ const Perfil = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
     const file = e.target.files;
     if (file) {
       const reader = new FileReader();
@@ -117,7 +109,9 @@ const Perfil = () => {
         );
 
         let foto: FotoProps = {
-          id: idFoto.current ? idFoto.current :  Math.floor(Math.random() * 1000000).toString(),
+          id: idFoto.current
+            ? idFoto.current
+            : Math.floor(Math.random() * 1000000).toString(),
           foto: base64WithOutPrefix,
           email: email,
         };
@@ -140,80 +134,73 @@ const Perfil = () => {
   };
 
   useEffect(() => {
-    getFotoId()
-   
-
+    getFotoId();
   }, []);
-
- 
-  
 
   return (
     <>
-     
       <ToastContainer theme="colored" />
-      <div className="flex flex-row gap-5 justify-center items-center flex-wrap py-5 ">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle>Atualizar perfil</CardTitle>
-            <CardDescription>Gerenciar meus dados de perfil</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-6">
-            <div className="flex flex-col items-center justify-center bg-white shadow-md rounded-lg p-5">
-              <img
-                className="w-32 h-32 rounded-full"
-                src={`data:image/png;base64,${foto}`}
-                alt="avatar"
-              />
-              <h1 className="text-xl font-semibold mt-5">{nome}</h1>
-              <span className="text-gray-500 text-sm"> {email}</span>
-            </div>
+
+      <Card className="max-w-md mx-auto md:max-w-lg lg:max-w-xl">
+        <CardHeader>
+          <CardTitle>Atualizar perfil</CardTitle>
+          <CardDescription>Gerenciar meus dados de perfil</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          <div className="flex flex-col items-center justify-center bg-gray-200 p-5 shadow-md rounded-lg">
+            <img
+              className="w-32 h-32 rounded-full"
+              src={`data:image/png;base64,${foto}`}
+              alt="avatar"
+            />
+            <h1 className="text-xl font-semibold mt-5">{nome}</h1>
+            <span className="text-gray-500 text-sm">{email}</span>
+          </div>
+          <div className="grid gap-4">
+            <Button variant="outline" onClick={() => handleButtonClick()}>
+              <UploadIcon className="mr-2 h-4 w-4" />
+              Atualizar minha foto
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+          </div>
+          <Separator />
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4">
-              <Button variant="outline" onClick={() => handleButtonClick()}>
-                <UploadIcon className="mr-2 h-4 w-4" />
-                Atualizar minha foto
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-            </div>
-            <Separator />
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Nova senha</Label>
-                  <Input
-                    {...register("password")}
-                    type="password"
-                    placeholder="Informe sua melhor senha"
-                  />
-                  {errors.password?.message && (
-                    <p>{errors.password.message.toString()}</p>
-                  )}
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirmPassword">Confirmar nova senha</Label>
-                  <Input
-                    {...register("confirmPassword")}
-                    type="password"
-                    placeholder="Confirme sua nova senha"
-                  />
-                  {errors.confirmPassword?.message && (
-                    <p>{errors.confirmPassword.message.toString()}</p>
-                  )}
-                </div>
-                <Button>
-                  <SaveAllIcon className="mr-2 h-4 w-4" />
-                  Atualizar senha
-                </Button>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Nova senha</Label>
+                <Input
+                  {...register("password")}
+                  type="password"
+                  placeholder="Informe sua melhor senha"
+                />
+                {errors.password?.message && (
+                  <p>{errors.password.message.toString()}</p>
+                )}
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirmar nova senha</Label>
+                <Input
+                  {...register("confirmPassword")}
+                  type="password"
+                  placeholder="Confirme sua nova senha"
+                />
+                {errors.confirmPassword?.message && (
+                  <p>{errors.confirmPassword.message.toString()}</p>
+                )}
+              </div>
+              <Button>
+                <SaveAllIcon className="mr-2 h-4 w-4" />
+                Atualizar senha
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </>
   );
 };
