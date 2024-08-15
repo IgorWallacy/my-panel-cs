@@ -176,17 +176,17 @@ export default function LoginPage() {
             {" "}
             {loading ? (
               <>
-                <ProgressBar
-                  mode="indeterminate"
-                  style={{ height: "24px" }}
-                ></ProgressBar>
+                <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
+                  <span className="sr-only">Loading...</span>
+                  <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                  <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+                </div>
               </>
             ) : (
               <>
-               
-              
-                <div className="flex h-screen bg-gray-300  flex-row-reverse flex-wrap justify-around items-center">
-                  <Card className="w-full max-w-md absolute ">
+                <div className="flex h-screen bg-gray-300  flex-row-reverse flex-wrap justify-around items-center ">
+                  <Card className="p-5 m-5 max-w-md absolute ">
                     <form onSubmit={handleSubmit(login)} className="space-y-4">
                       <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl">
