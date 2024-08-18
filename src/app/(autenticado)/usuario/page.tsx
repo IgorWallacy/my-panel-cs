@@ -175,7 +175,7 @@ const Usuario = () => {
     resolver: zodResolver(schema),
   });
 
-  const { reset } = form;
+
 
   const permissoes = [
     { id: "1", nome: "Administrador" },
@@ -395,7 +395,7 @@ const Usuario = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Novo</CardTitle>
-                <CardDescription>Cadastrar novo usuário </CardDescription>
+                <CardDescription> Aqui é possível cadastrar novos usuários para acessarem o sistema </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-row gap-10 m-5 justify-around item-center flex-wrap">
@@ -553,6 +553,7 @@ const Usuario = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Manutenção</CardTitle>
+                <CardDescription> Aqui é possível gereciar os usuários cadastrados no sistema </CardDescription>
               </CardHeader>
               <CardContent>
                 <MaterialReactTable table={table} />

@@ -119,7 +119,7 @@ export default function RootLayout({
                 text="Cadastro de clientes"
                 active={false}
                 alert={false}
-                href={""}
+                href={"/cliente"}
               />
               <SidebarItem
                 setExpanded={setExpanded}

@@ -123,6 +123,8 @@ export default function LoginPage() {
       });
   }
 
+
+
   return (
     <>
       <div className="flex min-h-dvh flex-col bg-gradient-to-b from-[#0D6EFD] to-[#0B5ED7] text-white">

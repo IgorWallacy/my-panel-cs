@@ -1,3 +1,5 @@
+
+
 import type { Metadata } from "next";
 
 import { Inter as FontSans } from "next/font/google"
@@ -22,6 +24,8 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+
+ 
   return (
     
     <html lang="pt-BR" suppressHydrationWarning>
