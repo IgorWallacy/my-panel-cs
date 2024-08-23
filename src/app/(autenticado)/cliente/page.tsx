@@ -1,14 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SaveAllIcon, Settings } from "lucide-react";
-import { ToastContainer } from "react-toastify";
-import CadastroClientePage from "./(cadastro)/page";
-import ManutencaoClientePage from "./(manutencao)/page";
+
+import CadastroClientePage from "./(cadastro)/cadastro-clienteComponent";
+import ManutencaoClientePage from "./(manutencao)/cliente-loginComponent";
 
 const ClientePage = () => {
   return (
     <>
-      <ToastContainer />
+      
 
       <div className="flex flex-col m-5 flex-wrap ">
         <Tabs defaultValue="cadastro" className="w-full p-4">

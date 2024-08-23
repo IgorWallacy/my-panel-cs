@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import CryptoJS from "crypto-js";
+import toast, { Toaster } from "react-hot-toast";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,6 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProgressBar } from "primereact/progressbar";
 
 const schema = z.object({
   email: z.string().min(1, "E-mail não informado").email("E-mail inválido"),
@@ -107,7 +107,7 @@ export default function LoginPage() {
     // console.log(encryptedData);
 
     localStorage.clear();
-    await api
+    const myPromise = api
       .post("/oauth/token", encryptedData, { params, headers })
       .then((r) => {
         localStorage.setItem("access_token", r.data?.access_token);
@@ -116,163 +116,122 @@ export default function LoginPage() {
       })
       .catch((e) => {
         setError([e]);
+        throw e;
         //console.log(e);
       })
       .finally(() => {
         setLoading(false);
       });
+
+    return toast.promise(myPromise, {
+      loading: "Logando...",
+      success: "Bem vindo(a) !",
+      error: (err) => {
+        let errorMessage;
+        switch (err?.response?.status) {
+          case 401:
+            errorMessage = "Usuário ou senha inválidos! ";
+            break;
+          case 500:
+            errorMessage = "Erro de servidor";
+            break;
+          default:
+            if (err?.code === "ERR_NETWORK") {
+              errorMessage = "👷‍♂️ Erro de servidor ";
+            } else {
+              errorMessage = "Erro desconhecido";
+            }
+        }
+        return `Ocorreu um erro ao realizar login! Motivo:  ${errorMessage}`;
+      },
+    });
   }
-
-
 
   return (
     <>
+      <Toaster />
       <div className="flex min-h-dvh flex-col bg-gradient-to-b from-[#0D6EFD] to-[#0B5ED7] text-white">
-        {error?.length > 0 ? (
-          <>
-            <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 bg-red-800">
-              <div className="mx-auto max-w-md text-center">
-                <div className="mx-auto h-12 w-12 text-red-500" />
-                <h1 className=" text-white mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                  {error[0]?.response?.status === 401
-                    ? "🚫 Oops, credenciais inválidas ! "
-                    : ""}
-                </h1>
-                <h1 className=" text-white mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                  {error[0]?.response?.status === 500
-                    ? " Oops, Ocorreu um erro no servidor ! "
-                    : ""}
-                </h1>
-                <p className="text-white">
-                  {error.map(
-                    (m) =>
-                      "Mensagem da API : " +
-                      m?.message +
-                      " Código do erro : " +
-                      m?.response?.status
-                  )}
-                </p>
-                <h1 className=" text-white mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                  {error[0]?.code === "ERR_NETWORK"
-                    ? "👨‍🔧 Oops, Erro no servidor ! "
-                    : ""}
-                </h1>
+        <>
+          <div className="flex h-screen bg-gray-300  flex-row-reverse flex-wrap justify-around items-center ">
+            <Card className="p-5 m-5 max-w-md absolute ">
+              <form onSubmit={handleSubmit(login)} className="space-y-4">
+                <CardHeader className="space-y-1">
+                  <CardTitle className="text-2xl"> 🔒 Acesso 🔒</CardTitle>
+                  <CardDescription>
+                    Informe seu e-mail e senha para acessar o sistema
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seuemail@email.com"
+                      required
+                      {...register("email")}
+                    />
+                    {errors.email && (
+                      <p className="text-red-500">
+                        {String(errors.email.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Senha</Label>
+                    <Input
+                      placeholder="Sua melhor senha "
+                      id="password"
+                      type="password"
+                      required
+                      {...register("password")}
+                    />
+                    {errors.password && (
+                      <p className="text-red-500">
+                        {String(errors.password.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="remember" className="cursor-pointer">
+                      <Checkbox id="remember" />
+                      Lembre-me
+                    </Label>
+                    <Link
+                      href="#"
+                      className="text-sm font-medium underline underline-offset-4 hover:text-primary"
+                      prefetch={false}
+                    >
+                      Esqueci minha senha
+                    </Link>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <div className="grid gap-2 sm:flex sm:justify-end">
+                    <Button
+                      type="submit"
+                      variant="default"
+                      className="w-full sm:w-auto"
+                      disabled={loading}
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />{" "}
+                      {loading ? "Carregando..." : "Entrar"}
+                    </Button>
 
-                <p className="mt-4 text-muted-foreground text-white">
-                  Não foi possível realizar seu login.
-                </p>
-                <div className="mt-6">
-                  <Button
-                    className="inline-flex items-center rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-red-50 shadow-sm transition-colors hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    onClick={() => setError([])}
-                  >
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                    Tentar novamente
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            {" "}
-            {loading ? (
-              <>
-                <div className="flex space-x-2 justify-center items-center bg-white h-screen dark:invert">
-                  <span className="sr-only">Loading...</span>
-                  <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex h-screen bg-gray-300  flex-row-reverse flex-wrap justify-around items-center ">
-                  <Card className="p-5 m-5 max-w-md absolute ">
-                    <form onSubmit={handleSubmit(login)} className="space-y-4">
-                      <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl">
-                          {" "}
-                          🔒 Acesso 🔒
-                        </CardTitle>
-                        <CardDescription>
-                          Informe seu e-mail e senha para acessar o sistema
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="email">E-mail</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="seuemail@email.com"
-                            required
-                            {...register("email")}
-                          />
-                          {errors.email && (
-                            <p className="text-red-500">
-                              {String(errors.email.message)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="password">Senha</Label>
-                          <Input
-                            placeholder="Sua melhor senha "
-                            id="password"
-                            type="password"
-                            required
-                            {...register("password")}
-                          />
-                          {errors.password && (
-                            <p className="text-red-500">
-                              {String(errors.password.message)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="remember" className="cursor-pointer">
-                            <Checkbox id="remember" />
-                            Lembre-me
-                          </Label>
-                          <Link
-                            href="#"
-                            className="text-sm font-medium underline underline-offset-4 hover:text-primary"
-                            prefetch={false}
-                          >
-                            Esqueci minha senha
-                          </Link>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <div className="grid gap-2 sm:flex sm:justify-end">
-                          <Button
-                            type="submit"
-                            variant="default"
-                            className="w-full sm:w-auto"
-                            disabled={loading}
-                          >
-                            <LogIn className="mr-2 h-4 w-4" />{" "}
-                            {loading ? "Carregando..." : "Entrar"}
-                          </Button>
-
-                          <Link
-                            href="#"
-                            className="inline-flex w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
-                            prefetch={false}
-                          >
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            Recuperar senha
-                          </Link>
-                        </div>
-                      </CardFooter>
-                    </form>
-                  </Card>
-                </div>
-              </>
-            )}
-          </>
-        )}
+                    <Link
+                      href="#"
+                      className="inline-flex w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
+                      prefetch={false}
+                    >
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                      Recuperar senha
+                    </Link>
+                  </div>
+                </CardFooter>
+              </form>
+            </Card>
+          </div>
+        </>
       </div>
     </>
   );

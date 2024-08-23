@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from 'react-hot-toast';
 import { Button } from "@/components/ui/button";
 import Token_dados from "../(token)/util";
 import { Input } from "@/components/ui/input";
@@ -139,7 +138,7 @@ const Perfil = () => {
 
   return (
     <>
-      <ToastContainer theme="colored" />
+      
 
       <Card className="max-w-md mx-auto md:max-w-lg lg:max-w-xl">
         <CardHeader>

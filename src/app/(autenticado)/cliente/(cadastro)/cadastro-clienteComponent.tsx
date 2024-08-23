@@ -16,21 +16,17 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { SaveAllIcon } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 
 import { z } from "zod";
 import Token_dados from "../../(token)/util";
-
-
 
 const schema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   email: z.string().min(1, "Informe um e-mail ").email("Email inválido"),
   observacao: z.string().optional(),
   whastapp: z.string().min(0, "Informe um número de WhatsApp").optional(),
-  foto: z
-    .string()
-    .optional(),
+  foto: z.string().optional(),
 });
 
 const CadastroClientePage = () => {
@@ -39,6 +35,7 @@ const CadastroClientePage = () => {
   });
 
   const [foto, setFoto] = useState<string | null>(null);
+
 
   const handleFileChange = (event: any) => {
     const file = event.target.files[0];
@@ -50,6 +47,8 @@ const CadastroClientePage = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  
 
   const onSubmit = async (data: any) => {
     let fotoWithoutBase64 = foto?.replace(/^data:image\/[a-z]+;base64,/, "");
@@ -68,8 +67,6 @@ const CadastroClientePage = () => {
     try {
       await schema.parseAsync(sendData);
 
-      
-
       return api
         .post("/api/cliente/cadastrar", sendData)
         .then((r) => {
@@ -82,11 +79,11 @@ const CadastroClientePage = () => {
             foto: "",
           });
           toast.success("Sucesso !", {
-            position: "bottom-center",
-            theme: "colored",
-            hideProgressBar: true,
-            pauseOnFocusLoss: false,
+           
+           
+           
           });
+         
         })
         .catch((e) => {
           console.log(e);
@@ -106,7 +103,9 @@ const CadastroClientePage = () => {
   };
 
   return (
+    
     <div className="flex flex-row m-5 flex-wrap">
+      <Toaster />
       <Player
         autoplay={true}
         loop={true}

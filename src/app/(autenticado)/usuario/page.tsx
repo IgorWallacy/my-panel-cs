@@ -19,7 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarIcon, SaveAllIcon, Settings, UserCircle2 } from "lucide-react";
 
 import api from "@/service/api";
-import { toast, ToastContainer } from "react-toastify";
+import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState, useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import Token_dados from "../(token)/util";
@@ -167,15 +167,12 @@ const Usuario = () => {
     permissoes: z.string().min(1, "Permissão é obrigatória"),
     vencimento: z.date({
       message: "Data de vencimento é obrigatória",
-      
     }),
   });
 
   const form = useForm({
     resolver: zodResolver(schema),
   });
-
-
 
   const permissoes = [
     { id: "1", nome: "Administrador" },
@@ -201,12 +198,10 @@ const Usuario = () => {
       },
     };
     // console.log(dataToSend);
-    return api
+    const myPromise = api
       .post("/api/usuario/novo", dataToSend)
       .then((r) => {
-        toast.success("Sucesso!", {
-          position: "top-center",
-        });
+       
         form.reset({
           permissoes: "",
           nome: "",
@@ -217,12 +212,14 @@ const Usuario = () => {
         getTodosUsuarios();
       })
       .catch((e) => {
-        toast.error(`Erro : ${e?.response?.data?.message}`, {
-          position: "bottom-center",
-        });
-        console.log(e);
+       throw e;
       })
       .finally(() => {});
+      toast.promise(myPromise, {
+        loading: 'Salvando...',
+        success: 'Sucesso !',
+        error: (e) => `Erro : ${e?.response?.data?.message}`,
+      });
   };
 
   const getTodosUsuarios = async () => {
@@ -338,20 +335,19 @@ const Usuario = () => {
     try {
       // Validação dos dados
       send.parse(data);
-
-      // Envio dos dados para a API
-      return api
+      const myPromisse = api
         .put("/api/usuario/atualizar", data)
         .then((r) => {
-          toast.success("Sucesso!", {
-            position: "top-center",
-          });
+         
           getTodosUsuarios();
         })
         .catch((e) => {
-          toast.error(`Erro : ${e?.response?.data?.message}`, {
-            position: "bottom-center",
-          });
+          throw e;
+        });
+        toast.promise(myPromisse, {
+          loading: 'Salvando...',
+          success: 'Sucesso!',
+          error: (e) => `Erro : ${e?.response?.data?.message}`,
         });
     } catch (e) {
       // Tratamento de erro de validação
@@ -364,7 +360,9 @@ const Usuario = () => {
       } else {
         console.error("Erro inesperado:", e);
       }
+      
     }
+    
   };
 
   useEffect(() => {
@@ -373,7 +371,7 @@ const Usuario = () => {
 
   return (
     <>
-      <ToastContainer />
+      <Toaster />
 
       <div className="flex flex-col m-5 flex-wrap ">
         <Tabs defaultValue="cadastro" className="w-full p-4">
@@ -395,7 +393,11 @@ const Usuario = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Novo</CardTitle>
-                <CardDescription> Aqui é possível cadastrar novos usuários para acessarem o sistema </CardDescription>
+                <CardDescription>
+                  {" "}
+                  Aqui é possível cadastrar novos usuários para acessarem o
+                  sistema{" "}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-row gap-10 m-5 justify-around item-center flex-wrap">
@@ -553,7 +555,10 @@ const Usuario = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Manutenção</CardTitle>
-                <CardDescription> Aqui é possível gereciar os usuários cadastrados no sistema </CardDescription>
+                <CardDescription>
+                  {" "}
+                  Aqui é possível gereciar os usuários cadastrados no sistema{" "}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <MaterialReactTable table={table} />

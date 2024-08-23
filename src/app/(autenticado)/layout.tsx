@@ -1,13 +1,13 @@
 "use client";
-import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
+import "primereact/resources/themes/tailwind-light/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/service/api";
 import Token_dados from "./(token)/util";
 import Sidebar, { SidebarItem } from "@/components/app/header";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from 'react-hot-toast';
+
 import {
   BarChart3,
   ChevronFirst,
@@ -99,7 +99,8 @@ export default function RootLayout({
 
   return (
     <>
-      <ToastContainer />
+    
+    <Toaster />
       <div className="relative flex min-h-screen flex-row ">
         
         {expanded ? (
