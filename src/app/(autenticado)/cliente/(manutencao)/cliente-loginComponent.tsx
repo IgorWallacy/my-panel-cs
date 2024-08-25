@@ -13,6 +13,7 @@ import {
   SaveAll,
   SaveAllIcon,
   ShuffleIcon,
+  
   UserRound,
   X,
 } from "lucide-react";
@@ -50,7 +51,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Textarea } from "@/components/ui/textarea";
 import toast, { Toaster } from "react-hot-toast";
 import { Cancel } from "@mui/icons-material";
-import { randomInt } from "crypto";
+
 
 const ManutencaoClientePage = ({
   ativo,
@@ -668,6 +669,7 @@ const ManutencaoClientePage = ({
                       );
                     }}
                   ></Column>
+                   
                 </DataTable>
               </>
             )}

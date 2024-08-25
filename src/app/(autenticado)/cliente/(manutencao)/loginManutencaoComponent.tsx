@@ -14,6 +14,7 @@ import {
   SaveAll,
   Shuffle,
   ShuffleIcon,
+  Trash,
   UserRound,
 } from "lucide-react";
 
@@ -479,6 +480,38 @@ const ManutencaoLoginPage = ({
                   );
                 }}
               ></Column>
+              <Column
+                    body={(row) => {
+                      return (
+                        <>
+                          <Button variant="destructive"
+                            onClick={() => {
+                              const myPromise = api
+                                .delete(`/api/login/deletar/${row.id}`)
+                                .then((r) => {
+                                  getLogins();
+                                  return r.data;
+                                })
+                                .catch((e) => {
+                                  throw e;
+                                })
+                                .finally(() => {});
+                              return toast.promise(myPromise, {
+                                loading: "Deletando...",
+                                success: "Sucesso!",
+                                error: (err) =>
+                                  `Erro ao deletar dados: ${
+                                    err.message || "Desconhecido"
+                                  }`,
+                              });
+                            }}
+                          >
+                            <Trash /> Deletar
+                          </Button>
+                        </>
+                      );
+                    }}
+                  ></Column>
             </DataTable>
           </>
         )}
