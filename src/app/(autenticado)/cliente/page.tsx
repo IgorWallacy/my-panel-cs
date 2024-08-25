@@ -49,7 +49,7 @@ const ClientePage = () => {
                     Aqui você pode adicionar novos clientes
                   </h1>
                 </CardDescription>
-                <CadastroClientePage />
+                <CadastroClientePage  ativo={setActiveIndex}  />
               </CardContent>
             </Card>
           </TabPanel>
@@ -76,7 +76,7 @@ const ClientePage = () => {
                     Gerenciar os clientes cadastrados
                   </h1>
                 </CardDescription>
-                <ManutencaoClientePage />
+                <ManutencaoClientePage  ativo={setActiveIndex} />
               </CardContent>
             </Card>
           </TabPanel>
@@ -101,7 +101,7 @@ const ClientePage = () => {
                       Aqui você pode gerenciar os logins dos clientes
                     </h1>
                   </CardDescription>
-                  <ManutencaoLoginPage />
+                  <ManutencaoLoginPage ativo={setActiveIndex} />
                 </CardContent>
               </Card>
             </div>

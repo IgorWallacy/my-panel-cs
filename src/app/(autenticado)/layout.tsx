@@ -99,19 +99,19 @@ export default function RootLayout({
     <div className="min-h-screen grid grid-rows-[auto,1fr] md:grid-cols-[auto,1fr] bg-gray-100">
       <Toaster />
       <header className="md:hidden sticky top-0 z-40 w-full border-b bg-white shadow-sm md:col-span-2 md:row-span-1">
-        <div className="container flex h-6 items-center space-x-4 sm:justify-between sm:space-x-0">
+        <div className="container flex h-6 py-5 items-center space-x-4 sm:justify-between sm:space-x-0">
           <button
             onClick={() => setExpanded((curr) => !curr)} // Alterna o estado
             className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors md:hidden"
           >
-            {expanded ? <ChevronFirst size={20} /> : <ChevronLast size={20} />}{" "}
+            {expanded ? <ChevronFirst size={40} /> : <ChevronLast size={40} />}{" "}
             {/* Icone alternado */}
           </button>
         </div>
       </header>
 
       <div
-        className={`flex flex-col bg-white ${
+        className={`flex flex-col bg-white w-full ${
           expanded ? "block" : "hidden"
         } md:flex`}
       >
@@ -120,7 +120,7 @@ export default function RootLayout({
             <h1 className="font-extrabold text-lg">My Panel</h1>
           </nav>
         </div>
-        <Sidebar expanded={expanded} setExpanded={setExpanded}>
+        <Sidebar  expanded={expanded} setExpanded={setExpanded}>
           <SidebarItem
             setExpanded={setExpanded}
             icon={<BarChart3 size={20} />}
@@ -128,6 +128,7 @@ export default function RootLayout({
             active={pathname === "/dashboard"}
             alert={false}
             href={"/dashboard"}
+            
           />
           <SidebarItem
             setExpanded={setExpanded}

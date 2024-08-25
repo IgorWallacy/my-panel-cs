@@ -56,7 +56,11 @@ import moment from "moment-timezone";
 moment.tz.setDefault("America/Sao_Paulo");
 moment.locale("pt-br");
 
-const ManutencaoLoginPage = () => {
+const ManutencaoLoginPage = ({
+  ativo,
+}: {
+  ativo: (index: number) => void;
+}) => {
   const vendedor_id = Token_dados().id;
   const [rowLogin, setRowLogin] = useState<any>(null);
   const [logins, setLogins] = useState([]);
@@ -131,6 +135,7 @@ const ManutencaoLoginPage = () => {
 
         setDialogLoginVisible(false);
         getLogins();
+        ativo(2);
         return r.data;
       })
       .catch((e) => {
@@ -143,6 +148,8 @@ const ManutencaoLoginPage = () => {
       error: (err) => `Erro ao salvar dados: ${err.message || "Desconhecido"}`,
     });
   };
+
+  
 
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value;
@@ -171,6 +178,7 @@ const ManutencaoLoginPage = () => {
   return (
     <>
       <div className="flex-1  flex-row gap-1">
+       
         {dialogLoginVisible ? (
           <>
             <Form {...form}>

@@ -52,7 +52,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { Cancel } from "@mui/icons-material";
 import { randomInt } from "crypto";
 
-const ManutencaoClientePage = () => {
+const ManutencaoClientePage = ({
+  ativo,
+}: {
+  ativo: (index: number) => void;
+}) => {
   const [row, setRow] = useState<any>(null);
   const [rowLogin, setRowLogin] = useState<any>(null);
   const [clientes, setClientes] = useState([]);
@@ -123,6 +127,7 @@ const ManutencaoClientePage = () => {
 
         setDialogLoginVisible(false);
         getClientes();
+        ativo(2);
         return r.data;
       })
       .catch((e) => {
@@ -583,8 +588,7 @@ const ManutencaoClientePage = () => {
                   responsiveLayout="stack"
                   breakpoint="968px"
                   stripedRows
-                  rows={3}
-                  paginator
+                 
                   globalFilterFields={["nome", "email", "whatsapp"]}
                   filters={filters}
                   header={() => {

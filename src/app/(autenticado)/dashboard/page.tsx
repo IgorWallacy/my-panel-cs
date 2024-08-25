@@ -16,6 +16,7 @@ export default function Page() {
   const [totalUsuarios, setTotalUsuarios] = useState(0);
   const [totalClientes, setTotalClientes] = useState(0);
   const [totalLogins, setTotalLogins] = useState(0);
+  const [totalLoginsInativos, setTotalLoginsInativos] = useState(0);
   const meuId = Token_dados().id;
 
   const getTotalUsuariosAtivos = async () => {
@@ -52,10 +53,23 @@ export default function Page() {
       });
   };
 
+  
+  const getTotalLoginsInativos = async () => {
+    return api
+              .get(`/api/login/listar/inativos/${meuId}`)
+      .then((response) => {
+        setTotalLoginsInativos(response?.data?.length);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
   useEffect(() => {
     getTotalUsuariosAtivos();
     getTotalClientesAtivos();
     getTotalLoginsAtivos();
+    getTotalLoginsInativos();
   }, []);
 
   return (
@@ -69,13 +83,13 @@ export default function Page() {
         <CardContent>
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-semibold">Ativos</h3>
-              <p className="text-2xl">{totalUsuarios}</p>
+              <h3 className="text-lg font-semibold text-green-500">Ativos</h3>
+              <p className="text-2xl text-green-500">{totalUsuarios}</p>
             </div>
             <Separator orientation="vertical" className="h-12" />
             <div>
-              <h3 className="text-lg font-semibold">Inativos</h3>
-              <p className="text-2xl">{0}</p>
+              <h3 className="text-lg font-semibold text-red-500">Inativos</h3>
+              <p className="text-2xl text-red-500">{0}</p>
             </div>
           </div>
         </CardContent>
@@ -89,17 +103,17 @@ export default function Page() {
         <CardContent>
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-semibold">Clientes ativos</h3>
+              <h3 className="text-lg font-semibold">Clientes</h3>
               <p className="text-2xl">{totalClientes}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Logins ativos</h3>
-              <p className="text-2xl">{totalLogins}</p>
+              <h3 className="text-lg font-semibold text-green-500">Logins ativos</h3>
+              <p className="text-2xl text-green-500">{totalLogins}</p>
             </div>
             <Separator orientation="vertical" className="h-12" />
             <div>
-              <h3 className="text-lg font-semibold">Logins inativos</h3>
-              <p className="text-2xl">{0}</p>
+              <h3 className="text-lg font-semibold text-red-500">Logins inativos</h3>
+              <p className="text-2xl text-red-500">{totalLoginsInativos}</p>
             </div>
           </div>
           

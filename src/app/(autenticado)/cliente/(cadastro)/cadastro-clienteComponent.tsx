@@ -29,7 +29,15 @@ const schema = z.object({
   foto: z.string().optional(),
 });
 
-const CadastroClientePage = () => {
+type SetAtivoFunction = () => void;
+
+const CadastroClientePage = ({ 
+  ativo,
+  
+}: {
+  ativo: (index:number) => void;
+  
+})  => {
   const form = useForm({
     resolver: zodResolver(schema),
   });
@@ -80,9 +88,11 @@ const CadastroClientePage = () => {
           });
           toast.success("Sucesso !", {
            
-           
+          
            
           });
+
+          ativo(1);
          
         })
         .catch((e) => {
