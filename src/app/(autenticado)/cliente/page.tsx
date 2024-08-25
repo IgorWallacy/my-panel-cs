@@ -1,56 +1,112 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SaveAllIcon, Settings } from "lucide-react";
+"use client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { SaveAll, Settings, Settings2Icon } from "lucide-react";
 
 import CadastroClientePage from "./(cadastro)/cadastro-clienteComponent";
 import ManutencaoClientePage from "./(manutencao)/cliente-loginComponent";
+import ManutencaoLoginPage from "./(manutencao)/loginManutencaoComponent";
+
+import React, { useState } from "react";
+import { TabView, TabPanel } from "primereact/tabview";
+
+import moment from "moment-timezone";
+
+moment.tz.setDefault("America/Sao_Paulo");
 
 const ClientePage = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   return (
     <>
-      
-
-      <div className="flex flex-col m-5 flex-wrap ">
-        <Tabs defaultValue="cadastro" className="w-full p-4">
-          <TabsList>
-            <TabsTrigger value="cadastro">
-              <span className="flex items-center justify-center gap-2">
-                <SaveAllIcon className="h-4 w-4" />
-                Cadastro de clientes
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="manutencao">
-              <span className="flex items-center justify-center gap-2">
-                <Settings className="h-4 w-4" />
-                Manutenção de clientes
-              </span>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="cadastro">
-           <Card>
-            <CardHeader>
-                <CardTitle>Cadastro de clientes</CardTitle>
-                <CardDescription>Aqui é possível cadastrar os clientes</CardDescription>
-            </CardHeader>
-            <CardContent>
+      <div className="card">
+        <TabView
+          activeIndex={activeIndex}
+          onTabChange={(e) => setActiveIndex(e.index)}
+        >
+          <TabPanel
+            header={
+              <>
+                <div className="flex gap-2">
+                  <SaveAll size={16} />
+                  <span>Cadastro de Clientes</span>
+                </div>
+              </>
+            }
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Cadastro de Clientes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  <h1 className="font-extrabold m-2">
+                    Aqui você pode adicionar novos clientes
+                  </h1>
+                </CardDescription>
                 <CadastroClientePage />
-            </CardContent>
-            
-           </Card>
-          </TabsContent>
-          <TabsContent value="manutencao">
-          <Card>
-            <CardHeader>
-                <CardTitle>Manutenção de clientes</CardTitle>
-                <CardDescription>Aqui é possível gerenciar os clientes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ManutencaoClientePage />
-            </CardContent>
-            
-           </Card>
-          </TabsContent>
-        </Tabs>
+              </CardContent>
+            </Card>
+          </TabPanel>
+          <TabPanel
+            header={
+              <>
+                <div className="flex gap-2">
+                  <Settings2Icon size={16} />
+                  <span>Manutenção de Clientes</span>
+                </div>
+              </>
+            }
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Manutenção de Clientes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  <h1 className="font-extrabold m-2">
+                    Aqui você pode adicionar logins aos clientes
+                  </h1>
+                  <h1 className="font-extrabold m-2">
+                    Gerenciar os clientes cadastrados
+                  </h1>
+                </CardDescription>
+                <ManutencaoClientePage />
+              </CardContent>
+            </Card>
+          </TabPanel>
+          <TabPanel
+            header={
+              <>
+                <div className="flex gap-2">
+                  <Settings size={16} />
+                  <span>Manutenção de logins</span>
+                </div>
+              </>
+            }
+          >
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Manutenção de Logins</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    <h1 className="font-extrabold m-2">
+                      Aqui você pode gerenciar os logins dos clientes
+                    </h1>
+                  </CardDescription>
+                  <ManutencaoLoginPage />
+                </CardContent>
+              </Card>
+            </div>
+          </TabPanel>
+        </TabView>
       </div>
     </>
   );

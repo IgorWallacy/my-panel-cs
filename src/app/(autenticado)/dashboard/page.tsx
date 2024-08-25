@@ -9,15 +9,43 @@ import {
 import api from "@/service/api";
 import { UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import Token_dados from "../(token)/util";
+import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
   const [totalUsuarios, setTotalUsuarios] = useState(0);
+  const [totalClientes, setTotalClientes] = useState(0);
+  const [totalLogins, setTotalLogins] = useState(0);
+  const meuId = Token_dados().id;
 
   const getTotalUsuariosAtivos = async () => {
     return api
-      .get("/api/usuario/todos")
+      .get(`/api/usuario/${meuId}/pai-e-descendentes`)
       .then((response) => {
-        setTotalUsuarios(response?.data?.length);
+        setTotalUsuarios(response?.data?.[0]?.subUsuarios?.length);
+       
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const getTotalClientesAtivos = async () => {
+    return api
+              .get(`/api/cliente/todos/${meuId}`)
+      .then((response) => {
+        setTotalClientes(response?.data?.length);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const getTotalLoginsAtivos = async () => {
+    return api
+              .get(`/api/login/listar/ativos/${meuId}`)
+      .then((response) => {
+        setTotalLogins(response?.data?.length);
       })
       .catch((e) => {
         console.error(e);
@@ -26,89 +54,60 @@ export default function Page() {
 
   useEffect(() => {
     getTotalUsuariosAtivos();
+    getTotalClientesAtivos();
+    getTotalLoginsAtivos();
   }, []);
 
   return (
     <>
-      <div className="flex justify-center items-center m-5 flex-wrap">
-        <div className="flex-1 justify-center items-center m-1">
-          <Card className="w-full max-w-sm p-6 grid gap-6">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <h3 className="text-xl font-semibold">Usuários</h3>
+      <div className="flex flex-col md:flex-row gap-4 p-4">
+      <Card className="w-full md:w-1/2">
+        <CardHeader>
+          <CardTitle>Total de Usuários</CardTitle>
+          <CardDescription>Usuários ativos e inativos</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-semibold">Ativos</h3>
+              <p className="text-2xl">{totalUsuarios}</p>
             </div>
-            <div className="grid gap-2 text-muted-foreground">
-              <div className="flex items-center justify-between text-green-500">
-                <span>Ativos</span>
-                <span className="font-medium">{totalUsuarios}</span>
-              </div>
-              <div className="flex items-center justify-between text-red-500">
-                <span>Inativos</span>
-                <span className="font-medium">0</span>
-              </div>
+            <Separator orientation="vertical" className="h-12" />
+            <div>
+              <h3 className="text-lg font-semibold">Inativos</h3>
+              <p className="text-2xl">{0}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-              <div className="flex items-center justify-between">
-                <span>Total</span>
-                <span className="font-medium">0</span>
-              </div>
+      <Card className="w-full md:w-1/2">
+        <CardHeader>
+          <CardTitle>Total de Clientes & Logins</CardTitle>
+          <CardDescription>Logins & Clientes ativos e inativos</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-semibold">Clientes ativos</h3>
+              <p className="text-2xl">{totalClientes}</p>
             </div>
-          </Card>
-        </div>
-
-        <div className="flex-1 justify-center items-center m-1">
-          <Card className="w-full max-w-sm p-6 grid gap-6">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <h3 className="text-xl font-semibold">Clientes</h3>
+            <div>
+              <h3 className="text-lg font-semibold">Logins ativos</h3>
+              <p className="text-2xl">{totalLogins}</p>
             </div>
-            <div className="grid gap-2 text-muted-foreground">
-              <div className="flex items-center justify-between text-green-500">
-                <span>Ativos</span>
-                <span className="font-medium">{totalUsuarios}</span>
-              </div>
-              <div className="flex items-center justify-between text-red-500">
-                <span>Inativos</span>
-                <span className="font-medium">0</span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span>Total</span>
-                <span className="font-medium">0</span>
-              </div>
+            <Separator orientation="vertical" className="h-12" />
+            <div>
+              <h3 className="text-lg font-semibold">Logins inativos</h3>
+              <p className="text-2xl">{0}</p>
             </div>
-          </Card>
-        </div>
-
-        <div className="flex-1 justify-center items-center m-1">
-          <Card className="w-full max-w-sm p-6 grid gap-6">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary rounded-md p-3 flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <h3 className="text-xl font-semibold">Logins</h3>
-            </div>
-            <div className="grid gap-2 text-muted-foreground">
-              <div className="flex items-center justify-between text-green-500">
-                <span>Ativos</span>
-                <span className="font-medium">{totalUsuarios}</span>
-              </div>
-              <div className="flex items-center justify-between text-red-500">
-                <span>Inativos</span>
-                <span className="font-medium">0</span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span>Total</span>
-                <span className="font-medium">0</span>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
+          </div>
+          
+        </CardContent>
+      </Card>
+    </div>
+       
+      
     </>
   );
 }

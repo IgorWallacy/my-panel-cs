@@ -12,6 +12,7 @@ import {
   MoveRightIcon,
   SaveAll,
   SaveAllIcon,
+  ShuffleIcon,
   UserRound,
   X,
 } from "lucide-react";
@@ -49,7 +50,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Textarea } from "@/components/ui/textarea";
 import toast, { Toaster } from "react-hot-toast";
 import { Cancel } from "@mui/icons-material";
-
+import { randomInt } from "crypto";
 
 const ManutencaoClientePage = () => {
   const [row, setRow] = useState<any>(null);
@@ -67,13 +68,12 @@ const ManutencaoClientePage = () => {
   const idVendedor = Token_dados().id;
 
   const schema = z.object({
-    
     login: z.string().min(1, "Login é obrigatório"),
     senha: z.string().min(1, "Senha é obrigatória"),
     vencimento: z.date({
       message: "Data de vencimento é obrigatória",
     }),
-   // cliente: z.object({ id: z.number().min(1, "Cliente é obrigatório") }), 
+    // cliente: z.object({ id: z.number().min(1, "Cliente é obrigatório") }),
   });
 
   const form = useForm({
@@ -96,12 +96,9 @@ const ManutencaoClientePage = () => {
   };
 
   const onSubmit = async (data: any) => {
-
-    
-   
     await schema.parseAsync(data);
 
-  //  console.log(data);
+    //  console.log(data);
 
     let sendData = {
       id: null,
@@ -113,7 +110,7 @@ const ManutencaoClientePage = () => {
       vencimento: data.vencimento,
     };
 
-   // console.log(sendData);
+    // console.log(sendData);
 
     const myPromise = api
       .post("/api/login/cadastrar", sendData)
@@ -132,12 +129,11 @@ const ManutencaoClientePage = () => {
         throw e;
       })
       .finally(() => {});
-   return toast.promise(myPromise, {
+    return toast.promise(myPromise, {
       loading: "Salvando...",
       success: "Sucesso!",
       error: (err) => `Erro ao salvar dados: ${err.message || "Desconhecido"}`,
     });
-
   };
 
   const onGlobalFilterChange = (e: any) => {
@@ -239,13 +235,13 @@ const ManutencaoClientePage = () => {
   useEffect(() => {
     getClientes();
   }, []);
-  
+
   return (
     <>
-      <div className="flex w-full flex-row gap-5  flex-wrap">
+      <div className="flex w-full  gap-5  flex-wrap">
         {dialogVisible ? (
           <>
-            <Card className="flex-1 ">
+            <div className="flex flex-col flex-wrap ">
               <CardHeader>
                 <CardTitle>Editar cliente</CardTitle>
                 <CardDescription>
@@ -253,14 +249,14 @@ const ManutencaoClientePage = () => {
                   gravar quando você terminar.
                 </CardDescription>
               </CardHeader>
-              <div className="flex gap-4 p-4 flex-wrap">
+              <div className="flex flex-row items-center justify-center gap-4 p-4 flex-wrap">
                 <Form {...formCliente}>
                   <form
-                    className="flex flex-col gap-4 flex-wrap"
+                    className="flex flex-col  gap-4 flex-wrap"
                     autoComplete="off"
                     onSubmit={formCliente.handleSubmit(onSubmitCliente)}
                   >
-                    <div className="flex flex-col gap-2">
+                    <div className="flex items-center flex-row gap-2">
                       <img
                         style={{
                           width: "50px",
@@ -374,7 +370,7 @@ const ManutencaoClientePage = () => {
                   </form>
                 </Form>
               </div>
-            </Card>
+            </div>
           </>
         ) : (
           <>
@@ -396,29 +392,38 @@ const ManutencaoClientePage = () => {
                           </CardDescription>
 
                           <CardDescription>
-                         <h1>   Cliente selecionado {"-->"} {rowLogin?.nome}</h1>
+                            <h1>
+                              {" "}
+                              Cliente selecionado {"-->"} {rowLogin?.nome}
+                            </h1>
                           </CardDescription>
-                          
+
                           <CardDescription>
                             Você esta cadastrando um login de acesso pelo
-                            receptor de canais para o(a) cliente {rowLogin?.nome}
+                            receptor de canais para o(a) cliente{" "}
+                            {rowLogin?.nome}
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex flex-col gap-2 items-center flex-wrap">
-                            {rowLogin?.foto ? <> <img
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "50%",
-                              }}
-                              src={`data:image/png;base64,${rowLogin?.foto}`}
-                              alt="avatar"
-                            /></> : <>
-                            <Avatar />
-                            </>}
-
-                           
+                            {rowLogin?.foto ? (
+                              <>
+                                {" "}
+                                <img
+                                  style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    borderRadius: "50%",
+                                  }}
+                                  src={`data:image/png;base64,${rowLogin?.foto}`}
+                                  alt="avatar"
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <Avatar />
+                              </>
+                            )}
                           </div>
                           <div className="flex items-center justify-center flex-wrap flex-">
                             <div className="flex gap-5 items-center justify-center flex-row flex-wrap w-full">
@@ -426,11 +431,28 @@ const ManutencaoClientePage = () => {
                                 control={form.control}
                                 name="login"
                                 render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Login </FormLabel>
-                                    <Input {...field} autoComplete="off" />
-                                    <FormMessage />
-                                  </FormItem>
+                                  <>
+                                    <div className="flex flex-col gap-5">
+                                      <FormItem>
+                                        <FormLabel>Login </FormLabel>
+                                        <Input {...field} autoComplete="off" />
+                                        <FormMessage />
+                                      </FormItem>
+                                      <Button
+                                        type="button"
+                                        onClick={() =>
+                                          field.onChange(
+                                            Math.floor(
+                                              Math.random() * 10000
+                                            ).toString()
+                                          )
+                                        }
+                                      >
+                                        <ShuffleIcon className="mr-2 h-4 w-4" />
+                                        Gerar login
+                                      </Button>
+                                    </div>
+                                  </>
                                 )}
                               />
 
@@ -438,11 +460,26 @@ const ManutencaoClientePage = () => {
                                 control={form.control}
                                 name="senha"
                                 render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Senha</FormLabel>
-                                    <Input {...field} />
-                                    <FormMessage />
-                                  </FormItem>
+                                  <div className="flex flex-col gap-5">
+                                    <FormItem>
+                                      <FormLabel>Senha </FormLabel>
+                                      <Input {...field} autoComplete="off" />
+                                      <FormMessage />
+                                    </FormItem>
+                                    <Button
+                                      type="button"
+                                      onClick={() =>
+                                        field.onChange(
+                                          Math.floor(
+                                            Math.random() * 10000
+                                          ).toString()
+                                        )
+                                      }
+                                    >
+                                      <ShuffleIcon className="mr-2 h-4 w-4" />
+                                      Gerar senha
+                                    </Button>
+                                  </div>
                                 )}
                               />
 
@@ -450,46 +487,56 @@ const ManutencaoClientePage = () => {
                                 control={form.control}
                                 name="vencimento"
                                 render={({ field }) => (
-                                  <FormItem className="flex flex-col m-2">
+                                  <FormItem>
                                     <FormLabel>Próximo vencimento</FormLabel>
-                                    <Popover>
-                                      <PopoverTrigger asChild>
-                                        <FormControl>
-                                          <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                              "w-[240px] pl-3 text-left font-normal",
-                                              !field.value &&
-                                                "text-muted-foreground"
-                                            )}
-                                          >
-                                            {field.value ? (
-                                              moment(field.value).format(
-                                                "DD/MM/YYYY"
-                                              )
-                                            ) : (
-                                              <span>Escolha uma data</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                          </Button>
-                                        </FormControl>
-                                      </PopoverTrigger>
-                                      <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
+                                    <div className="flex flex-col gap-4">
+                                      <Popover>
+                                        <PopoverTrigger asChild>
+                                          <FormControl>
+                                            <Button
+                                              variant={"outline"}
+                                              className={cn(
+                                                "w-[240px] pl-3 text-left font-normal",
+                                                !field.value &&
+                                                  "text-muted-foreground"
+                                              )}
+                                            >
+                                              {field.value ? (
+                                                moment(field.value).format(
+                                                  "DD/MM/YYYY"
+                                                )
+                                              ) : (
+                                                <span>Escolha uma data</span>
+                                              )}
+                                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                          </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                          <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                              date <= new Date()
+                                            }
+                                            initialFocus
+                                          />
+                                        </PopoverContent>
+                                      </Popover>
+                                      <Button
+                                        type="button"
+                                        onClick={() =>
+                                          field.onChange(
+                                            moment().add(30, "days").toDate()
+                                          )
+                                        }
+                                        className="flex items-center"
                                       >
-                                        <Calendar
-                                          mode="single"
-                                          selected={field.value}
-                                          onSelect={field.onChange}
-                                          disabled={(date) =>
-                                            date <= new Date()
-                                          }
-                                          initialFocus
-                                        />
-                                      </PopoverContent>
-                                    </Popover>
-
+                                        <ShuffleIcon className="mr-2 h-4 w-4" />
+                                        Adicionar 30 dias
+                                      </Button>
+                                    </div>
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -510,20 +557,17 @@ const ManutencaoClientePage = () => {
                               <Cancel className="mr-2 h-4 w-4" /> Fechar
                             </Button>
                             <CardDescription>
-                            <p className="text-muted-foreground">
-                              Ao clicar em adicionar, você estará salvando as
-                              informações do login.
-                            </p>
-                            <p>
-                              <strong>Atenção:</strong> Ao clicar em fechar,
-                              você estará fechando a janela de adição sem salvar as
-                              informações.
-                            </p>
-                          </CardDescription>
+                              <p className="text-muted-foreground">
+                                Ao clicar em adicionar, você estará salvando as
+                                informações do login.
+                              </p>
+                              <p>
+                                <strong>Atenção:</strong> Ao clicar em fechar,
+                                você estará fechando a janela de adição sem
+                                salvar as informações.
+                              </p>
+                            </CardDescription>
                           </div>
-
-                          
-
                         </CardFooter>
                       </Card>
                     </div>

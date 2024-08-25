@@ -68,3 +68,25 @@
    
   }
 }
+
+/* styles.css */
+
+/* Estilos para a scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* Largura da scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Cor de fundo da track */
+  border-radius: 4px; /* Borda arredondada da track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2); /* Cor do thumb */
+  border-radius: 4px; /* Borda arredondada do thumb */
+  backdrop-filter: blur(4px); /* Efeito de blur */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* Cor do thumb ao passar o mouse */
+}

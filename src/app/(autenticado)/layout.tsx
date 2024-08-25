@@ -1,12 +1,12 @@
 "use client";
-import "primereact/resources/themes/tailwind-light/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
+import "primereact/resources/themes/tailwind-light/theme.css"; //theme
+import "primereact/resources/primereact.min.css"; //core css
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import api from "@/service/api";
 import Token_dados from "./(token)/util";
 import Sidebar, { SidebarItem } from "@/components/app/header";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 import {
   BarChart3,
@@ -19,20 +19,23 @@ import {
 } from "lucide-react";
 import React from "react";
 
+import moment from "moment-timezone";
+
+moment.tz.setDefault("America/Sao_Paulo");
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [expanded, setExpanded] = React.useState(false);
 
   const token = useRef<string | null>(null);
 
   const [tokenDados, setTokenDados] = useState(Token_dados);
-
- 
 
   if (typeof window !== "undefined") {
     token.current = localStorage.getItem("access_token") ?? "";
@@ -49,12 +52,9 @@ export default function RootLayout({
 
     api.interceptors.request.use(
       (config) => {
-        // Do something before request is sent
-
         config.headers["Authorization"] = "bearer " + a;
         return config;
       },
-
       (error) => {
         Promise.reject(error);
       }
@@ -82,9 +82,7 @@ export default function RootLayout({
   const health = async () => {
     return await api
       .get("/actuator/health")
-      .then((r) => {
-     //  console.log(r.data)
-      })
+      .then((r) => {})
       .catch((e) => {
         console.log(e);
       });
@@ -98,86 +96,81 @@ export default function RootLayout({
   }, []);
 
   return (
-    <>
-    
-    <Toaster />
-      <div className="relative flex min-h-screen flex-row ">
-        
-        {expanded ? (
-          <>
-            <Sidebar expanded={expanded} setExpanded={setExpanded}>
-              <SidebarItem
-                setExpanded={setExpanded}
-                icon={<BarChart3 size={20} />}
-                text="Dashboard"
-                active={false}
-                alert={false}
-                href={"/dashboard"}
-              />
-              <SidebarItem
-                setExpanded={setExpanded}
-                icon={<Users size={20} />}
-                text="Cadastro de clientes"
-                active={false}
-                alert={false}
-                href={"/cliente"}
-              />
-              <SidebarItem
-                setExpanded={setExpanded}
-                icon={<UserPlus size={20} />}
-                text="Cadastro de usuários"
-                active={false}
-                alert={false}
-                href={"/usuario"}
-              />
-              <SidebarItem
-                setExpanded={setExpanded}
-                icon={<Receipt size={20} />}
-                text="Faturas"
-                active={false}
-                alert={false}
-                href={""}
-              />
-              <SidebarItem
-                setExpanded={setExpanded}
-                icon={<User2Icon size={20} />}
-                text="Meu perfil"
-                active={false}
-                alert={false}
-                href={"/perfil"}
-              />
-            </Sidebar>
-          </>
-        ) : (
-          <></>
-        )}
-
-        
-        <div
-          className={`flex-1  justify-center items-center bg-slate-100   ${
-            expanded ? "hidden" : ""
-          }`}
-        >
-          <header className="sticky top-0 z-40 w-full border-b bg-background mb-1">
-            <div className="container flex h-8 items-center space-x-4 sm:justify-between sm:space-x-0">
-              <div className="flex flex-1 flex-row items-center justify-end space-x-4">
-                <nav className="flex items-center space-x-1">
-                  <h1 className="font-extrabold">My Panel</h1>
-                 
-                </nav>
-              </div>
-            </div>
-          </header>
+    <div className="min-h-screen grid grid-rows-[auto,1fr] md:grid-cols-[auto,1fr] bg-gray-100">
+      <Toaster />
+      <header className="md:hidden sticky top-0 z-40 w-full border-b bg-white shadow-sm md:col-span-2 md:row-span-1">
+        <div className="container flex h-6 items-center space-x-4 sm:justify-between sm:space-x-0">
           <button
-          onClick={() => setExpanded((curr) => !curr)}
-          className="p-1.5 fixed left-0 rounded-lg bg-black text-white mx-1 hover:bg-gray-100 hover:text-black "
-        >
-          {expanded ? <ChevronFirst size={20} /> : <ChevronLast size={20} />}
-        </button>
-          {children}
-          
+            onClick={() => setExpanded((curr) => !curr)} // Alterna o estado
+            className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors md:hidden"
+          >
+            {expanded ? <ChevronFirst size={20} /> : <ChevronLast size={20} />}{" "}
+            {/* Icone alternado */}
+          </button>
         </div>
+      </header>
+
+      <div
+        className={`flex flex-col bg-white ${
+          expanded ? "block" : "hidden"
+        } md:flex`}
+      >
+        <div className="flex flex-1 p-1 flex-row items-center justify-center space-x-4">
+          <nav className="flex items-center space-x-1">
+            <h1 className="font-extrabold text-lg">My Panel</h1>
+          </nav>
+        </div>
+        <Sidebar expanded={expanded} setExpanded={setExpanded}>
+          <SidebarItem
+            setExpanded={setExpanded}
+            icon={<BarChart3 size={20} />}
+            text="Dashboard"
+            active={pathname === "/dashboard"}
+            alert={false}
+            href={"/dashboard"}
+          />
+          <SidebarItem
+            setExpanded={setExpanded}
+            icon={<Users size={20} />}
+            text="Gerenciar clientes & Logins"
+            active={pathname === "/cliente"}
+            alert={false}
+            href={"/cliente"}
+          />
+          <SidebarItem
+            setExpanded={setExpanded}
+            icon={<UserPlus size={20} />}
+            text="Gerenciar usuários"
+            active={pathname === "/usuario"}
+            alert={false}
+            href={"/usuario"}
+          />
+          <SidebarItem
+            setExpanded={setExpanded}
+            icon={<Receipt size={20} />}
+            text="Faturas"
+            active={pathname === ""}
+            alert={false}
+            href={""}
+          />
+          <SidebarItem
+            setExpanded={setExpanded}
+            icon={<User2Icon size={20} />}
+            text="Meu perfil"
+            active={pathname === "/perfil"}
+            alert={false}
+            href={"/perfil"}
+          />
+        </Sidebar>
       </div>
-    </>
+      {expanded ? (
+        <></>
+      ) : (
+        <>
+          {" "}
+          <div className="h-screen flex-1 p-4 overflow-y-auto">{children}</div>
+        </>
+      )}
+    </div>
   );
 }

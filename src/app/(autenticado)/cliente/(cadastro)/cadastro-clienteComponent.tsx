@@ -114,7 +114,7 @@ const CadastroClientePage = () => {
         style={{ height: "50vh", width: "100%" }}
       ></Player>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form  onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4">
             <FormField
               control={form.control}
@@ -133,7 +133,7 @@ const CadastroClientePage = () => {
               )}
             />
           </div>
-          <div className="flex gap-5">
+          <div className="flex gap-5 flex-wrap">
             <FormField
               control={form.control}
               name="nome"

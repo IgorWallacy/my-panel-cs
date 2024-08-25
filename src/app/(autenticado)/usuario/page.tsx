@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { CalendarIcon, SaveAllIcon, Settings, UserCircle2 } from "lucide-react";
+import { CalendarIcon, SaveAllIcon, Settings, Settings2, UserCircle2 } from "lucide-react";
 
 import api from "@/service/api";
 import toast, { Toaster } from "react-hot-toast";
@@ -65,6 +65,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TabPanel, TabView } from "primereact/tabview";
 
 type Usuario = {
   id: number;
@@ -201,7 +202,6 @@ const Usuario = () => {
     const myPromise = api
       .post("/api/usuario/novo", dataToSend)
       .then((r) => {
-       
         form.reset({
           permissoes: "",
           nome: "",
@@ -212,14 +212,14 @@ const Usuario = () => {
         getTodosUsuarios();
       })
       .catch((e) => {
-       throw e;
+        throw e;
       })
       .finally(() => {});
-      toast.promise(myPromise, {
-        loading: 'Salvando...',
-        success: 'Sucesso !',
-        error: (e) => `Erro : ${e?.response?.data?.message}`,
-      });
+    toast.promise(myPromise, {
+      loading: "Salvando...",
+      success: "Sucesso !",
+      error: (e) => `Erro : ${e?.response?.data?.message}`,
+    });
   };
 
   const getTodosUsuarios = async () => {
@@ -338,17 +338,16 @@ const Usuario = () => {
       const myPromisse = api
         .put("/api/usuario/atualizar", data)
         .then((r) => {
-         
           getTodosUsuarios();
         })
         .catch((e) => {
           throw e;
         });
-        toast.promise(myPromisse, {
-          loading: 'Salvando...',
-          success: 'Sucesso!',
-          error: (e) => `Erro : ${e?.response?.data?.message}`,
-        });
+      toast.promise(myPromisse, {
+        loading: "Salvando...",
+        success: "Sucesso!",
+        error: (e) => `Erro : ${e?.response?.data?.message}`,
+      });
     } catch (e) {
       // Tratamento de erro de validação
       if (e instanceof z.ZodError) {
@@ -360,9 +359,7 @@ const Usuario = () => {
       } else {
         console.error("Erro inesperado:", e);
       }
-      
     }
-    
   };
 
   useEffect(() => {
@@ -373,200 +370,194 @@ const Usuario = () => {
     <>
       <Toaster />
 
-      <div className="flex flex-col m-5 flex-wrap ">
-        <Tabs defaultValue="cadastro" className="w-full p-4">
-          <TabsList>
-            <TabsTrigger value="cadastro">
-              <span className="flex items-center justify-center gap-2">
-                <SaveAllIcon className="h-4 w-4" />
-                Cadastro de usuários
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="manutencao">
-              <span className="flex items-center justify-center gap-2">
-                <Settings className="h-4 w-4" />
-                Manutenção de usuários
-              </span>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="cadastro">
-            <Card>
-              <CardHeader>
-                <CardTitle>Novo</CardTitle>
-                <CardDescription>
-                  {" "}
-                  Aqui é possível cadastrar novos usuários para acessarem o
-                  sistema{" "}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-row gap-10 m-5 justify-around item-center flex-wrap">
-                  <Player
-                    autoplay={true}
-                    loop={true}
-                    controls={true}
-                    src="/animations/add-user.json"
-                    style={{ height: "50vh", width: "100%" }}
-                  ></Player>
+      <TabView>
+        <TabPanel header={
+          <div className="flex items-center gap-2">
+            <SaveAllIcon className="h-5 w-5" />
+            Cadastrar usuário
+          </div>
+        }>
+          <Card>
+            <CardHeader>
+              <CardTitle>Novo</CardTitle>
+              <CardDescription>
+                {" "}
+                Aqui é possível cadastrar novos usuários para acessarem o
+                sistema{" "}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-row gap-10 m-5 justify-around item-center flex-wrap">
+                <Player
+                  autoplay={true}
+                  loop={true}
+                  controls={true}
+                  src="/animations/add-user.json"
+                  style={{ height: "50vh", width: "100%" }}
+                ></Player>
 
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                      control={form.control}
+                      name="permissoes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Permissão</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Seleione uma permissão" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {permissoes.map((p) => (
+                                <SelectItem key={p.id} value={p.id}>
+                                  {p.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex gap-5">
                       <FormField
                         control={form.control}
-                        name="permissoes"
+                        name="nome"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Permissão</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Seleione uma permissão" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {permissoes.map((p) => (
-                                  <SelectItem key={p.id} value={p.id}>
-                                    {p.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <FormLabel>Nome</FormLabel>
+                            <Input {...field} />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <Input {...field} />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="senha"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <Input type="text" {...field} />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex gap-5">
+                      <FormField
+                        control={form.control}
+                        name="faturamento"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Dia de faturamento</FormLabel>
+                            <Input
+                              type="number"
+                              id="number"
+                              placeholder="Informe o dia do faturamento"
+                              pattern="[0-9]*"
+                              {...field}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="vencimento"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col m-2">
+                            <FormLabel>Próximo vencimento</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-[240px] pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      moment(field.value).format("DD/MM/YYYY")
+                                    ) : (
+                                      <span>Escolha uma data</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
+                              >
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) => date <= new Date()}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
 
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <div className="flex gap-5">
-                        <FormField
-                          control={form.control}
-                          name="nome"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nome</FormLabel>
-                              <Input {...field} />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <Input {...field} />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="senha"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Senha</FormLabel>
-                              <Input type="text" {...field} />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="flex gap-5">
-                        <FormField
-                          control={form.control}
-                          name="faturamento"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Dia de faturamento</FormLabel>
-                              <Input
-                                type="number"
-                                id="number"
-                                placeholder="Informe o dia do faturamento"
-                                pattern="[0-9]*"
-                                {...field}
-                              />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="vencimento"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col m-2">
-                              <FormLabel>Próximo vencimento</FormLabel>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant={"outline"}
-                                      className={cn(
-                                        "w-[240px] pl-3 text-left font-normal",
-                                        !field.value && "text-muted-foreground"
-                                      )}
-                                    >
-                                      {field.value ? (
-                                        moment(field.value).format("DD/MM/YYYY")
-                                      ) : (
-                                        <span>Escolha uma data</span>
-                                      )}
-                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  className="w-auto p-0"
-                                  align="start"
-                                >
-                                  <Calendar
-                                    mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
-                                    disabled={(date) => date <= new Date()}
-                                    initialFocus
-                                  />
-                                </PopoverContent>
-                              </Popover>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="flex items-center justify-center my-5">
-                        <Button type="submit">
-                          <SaveAllIcon className="mr-2 h-4 w-4" />
-                          Gravar
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="manutencao">
-            <Card>
-              <CardHeader>
-                <CardTitle>Manutenção</CardTitle>
-                <CardDescription>
-                  {" "}
-                  Aqui é possível gereciar os usuários cadastrados no sistema{" "}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MaterialReactTable table={table} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+                    </div>
+                    <div className="flex items-center justify-center my-5">
+                      <Button type="submit">
+                        <SaveAllIcon className="mr-2 h-4 w-4" />
+                        Gravar
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        </TabPanel>
+        <TabPanel header={
+          <div className="flex items-center gap-2">
+            <Settings2 className="h-5 w-5" />
+            Gerenciar usuários
+          </div>
+        }>
+          <Card>
+            <CardHeader>
+              <CardTitle>Manutenção</CardTitle>
+              <CardDescription>
+                {" "}
+                Aqui é possível gereciar os usuários cadastrados no sistema{" "}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MaterialReactTable table={table} />
+            </CardContent>
+          </Card>
+        </TabPanel>
+      </TabView>
     </>
   );
 };

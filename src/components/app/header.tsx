@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleX,  LogOut } from "lucide-react";
+import { CircleX, LogOut } from "lucide-react";
 import Token_dados from "@/app/(autenticado)/(token)/util";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -28,7 +28,6 @@ export default function Sidebar({
       .get(`/api/usuario/perfil/foto/fotoID/${email}`)
       .then((r) => {
         setFoto(r?.data?.foto);
-        // console.log(foto.current)
       })
       .catch((e) => {
         console.log(e);
@@ -41,59 +40,55 @@ export default function Sidebar({
 
   return (
     <>
-      <aside
-        className={`h-screen w-screen ${
-          expanded ? "block" : "hidden"
-        } md:block`}
-      >
-        <nav className="h-screen  flex flex-col  border-r shadow-sm">
-          <div className="flex items-center justify-end p-1">
-            <Button variant="destructive" onClick={() => setExpanded(false)}>
-              <CircleX size="icon" />
-            </Button>
-          </div>
+     <aside
+  className={`flex justify-center items-center gap-1 w-screen h-full ${
+    expanded ? "block" : "hidden"
+  } md:block md:w-64 bg-white shadow-lg`}
+>
+  <nav className="h-full flex flex-col border-r">
+    <div className="flex items-center justify-end p-4 ">
+      <Button className="md:hidden" variant="ghost" onClick={() => setExpanded(false)}>
+        <CircleX size="icon" className="text-gray-500" />
+      </Button>
+    </div>
 
-          <ul className="flex flex-col h-screen items-center  gap-5 p-1 text-xl text-black bg-gray-100 border-2">
-            {children}
-          </ul>
+    <ul className="flex-1 flex flex-col items-start gap-3 p-1 text-base text-gray-700">
+      {children}
+    </ul>
 
-          
-            <div
-              className={`flex flex-row  gap-5  h-24 items-center justify-center w-full`}
-            >
-              <div className="flex gap-5">
-                
-             
-              <img
-                className="w-16 h-12  rounded-full"
-                src={`data:image/png;base64,${foto}`}
-                alt="avatar"
-              />
-              <div className="flex flex-col justify-around w-full ">
-                <h4 className="font-semibold"> {nome} </h4>
-                <span className="text-xs text-gray-500">{email}</span>
-                <span className="text-xs text-gray-500">{permissao}</span>
-              </div>
-              <Link href="/login">
-                <Button
-                  className="flex items-center justify-center"
-                  variant="destructive"
-                  onClick={() => {
-                    localStorage.clear();
-                   
-                    //  router.push("/login")
-                  }}
-                >
-                  <LogOut size={20} />
-                </Button>
-              </Link>
-            </div>
-            </div>
-        </nav>
-      </aside>
+    <div className="flex flex-col gap-4 p-1 border-t">
+      <div className="flex items-center gap-4">
+        <img
+          className="w-12 h-12 rounded-full"
+          src={`data:image/png;base64,${foto}`}
+          alt="avatar"
+        />
+        <div className="flex flex-col">
+          <h4 className="font-semibold text-gray-800">{nome}</h4>
+          <span className="text-xs text-gray-500">{email}</span>
+          <span className="text-xs text-gray-500">{permissao}</span>
+        </div>
+      </div>
+      <Link href="/login">
+        <Button
+          className="flex items-center justify-center w-full"
+          variant="destructive"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
+          <LogOut size={20} className="text-white" />
+        </Button>
+      </Link>
+    </div>
+  </nav>
+</aside>
+
     </>
   );
 }
+
+
 
 export function SidebarItem({
   icon,
@@ -113,17 +108,16 @@ export function SidebarItem({
   return (
     <Link href={href} onClick={() => setExpanded(false)}>
       <li
-        className={`relative flex items-center py-2 px-3 cursor-pointer hover:text-white font-medium rounded-md transition-colors ${
+        className={`relative flex items-center py-2 px-3 cursor-pointer font-medium rounded-md transition-colors ${
           active
-            ? "bg-gradient-to-tr from-indigo-500 to-indigo-100 text-white"
-            : "hover:text-gray-600 hover:bg-indigo-200 "
+            ? "bg-indigo-600 text-white"
+            : "hover:bg-indigo-100 hover:text-indigo-600"
         }`}
+        aria-current={active ? "page" : undefined}
       >
         {icon}
-        <span className="w-52 ml-3  hover:text-white ">{text}</span>
-        {alert && (
-          <div className="absolute right-2 rounded bg-indigo-400 text-white"></div>
-        )}
+        <span className="ml-3">{text}</span>
+       
       </li>
     </Link>
   );
